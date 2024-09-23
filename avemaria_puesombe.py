@@ -7,6 +7,7 @@ from Equipos.Liverpool import *
 from Equipos.Man_city import *
 from Equipos.Psg import *
 
+
 def elegir_equipo(jugador: str) -> dict:
     """
     Función para elegir el equipo de fútbol.
@@ -39,8 +40,9 @@ def elegir_equipo(jugador: str) -> dict:
     ataque = equipo_seleccionado["ataque"]
     defensa = equipo_seleccionado["defensa"]
     costo = equipo_seleccionado["costo"]
+    nombres = equipo_seleccionado["nombre"]
 
-    return jugadores, ataque, defensa, costo
+    return jugadores, ataque, defensa, costo, nombres
 
 def elegir_modo_juego() -> int:
     """
@@ -61,62 +63,9 @@ def elegir_modo_juego() -> int:
         except ValueError:
             print("Entrada no válida. Por favor, ingrese un número.")
 
-
-def evaluar_columna(fila_p1, columna_p1, fila_p2, columna_p2, numero_jugador_escogido, numero_segundo_escogido) -> int:
-    """
-    Función optimizada para evaluar una columna de juego.
-
-    Args:
-    fila_p1, columna_p1, fila_p2, columna_p2 (int): Posiciones del jugador 1 y jugador 2 en la matriz.
-    numero_jugador_escogido, numero_segundo_escogido (int): Números de jugadores seleccionados.
-
-    Returns:
-    int: Goles del jugador 1 y goles del jugador 2.
-    """
-    
-    # Diccionario para las columnas de ambos jugadores
-    columnas_p1 = {1: {}, 2: {}, 3: {}, 4: {}}
-    columnas_p2 = {1: {}, 2: {}, 3: {}, 4: {}}
-
-    # Función auxiliar para asignar jugadores a una columna
-    def asignar_jugador(fila, columna, jugador, columnas):
-        if fila not in columnas[columna]:
-            columnas[columna][f"fila{fila}"] = [jugador]
-        else:
-            columnas[columna][f"fila{fila}"].append(jugador)
-
-    # Asignación de jugadores del jugador 1 y jugador 2
-    asignar_jugador(fila_p1, columna_p1, numero_jugador_escogido, columnas_p1)
-    asignar_jugador(fila_p2, columna_p2, numero_segundo_escogido, columnas_p2)
-
-    goles_p1 = goles_p2 = 0
-
-    # Función auxiliar para calcular goles basado en las posiciones de los jugadores
-    def calcular_goles(columnas_jugador, ataque_jugadores, defensa_jugadores, columnas_rival, goles):
-        for columna, filas in columnas_jugador.items():
-            for fila, jugadores in filas.items():
-                if columna in columnas_rival and fila in columnas_rival[columna]:
-                    # Lógica de ataque y defensa entre jugador 1 y jugador 2
-                    for jugador in jugadores:
-                        defensa_rival = defensa_jugadores[jugador]
-                        ataque_rival = ataque_jugadores[jugador]
-                        defensa_rival -= ataque_rival
-                        if defensa_rival <= 0:
-                            goles += ataque_rival
-                else:
-                    # Solo el jugador 1 está en la columna
-                    for jugador in jugadores:
-                        goles += ataque_jugadores[jugador]
-        return goles
-
-    # Calcular goles de ambos jugadores
-    goles_p1 = calcular_goles(columnas_p1, ataque_jugadores_p1, defensa_jugadores_p2, columnas_p2, goles_p1)
-    goles_p2 = calcular_goles(columnas_p2, ataque_jugadores_p2, defensa_jugadores_p1, columnas_p1, goles_p2)
-
-    return goles_p1, goles_p2
-
-
 # Bucle de juego por rondas
+
+
 if __name__ == "__main__":
     
     teams = {
@@ -129,24 +78,22 @@ if __name__ == "__main__":
         7: milan,
         8: city
     }
-
-    jugadores_p1, ataque_jugadores_p1, defensa_jugadores_p1, costo_jugadores_p1 = elegir_equipo("Jugador 1")
-    jugadores_p2, ataque_jugadores_p2, defensa_jugadores_p2, costo_jugadores_p2 = elegir_equipo("Jugador 2")
+    jugadores_p1, ataque_jugadores_p1, defensa_jugadores_p1, costo_jugadores_p1, nombres_p1 = elegir_equipo("Jugador 1")
+    jugadores_p2, ataque_jugadores_p2, defensa_jugadores_p2, costo_jugadores_p2, nombres_p2 = elegir_equipo("Jugador 2")
     rondas_totales = elegir_modo_juego()
-    goles_primer_jugador, goles_segundo_jugador = evaluar_columna()
-
     matriz_visual = [[" " * 100 for _ in range(5)] for _ in range(226)]
-    talentos_jugador_1 : int = 1
-    talentos_jugador_2 : int = 1
+    talentos_jugador_1 : int = 100000
+    talentos_jugador_2 : int = 100000
     ronda = 1
     while ronda <= rondas_totales:
         ronda : int = 1
         print(f"--- Ronda {ronda} ---")
         # Turno del jugador 1
         print("--- Turno del primer jugador ---")
-        print(f"-- GOLES P1-- {goles_primer_jugador}")
-        print(f"-- GOLES P2-- {goles_segundo_jugador}")
+        print(f"-- GOLES P1-- ")
+        print(f"-- GOLES P2-- ")
         print(f"-- CREDITOS -- {talentos_jugador_1}")
+        print(f"Sus jugadores son:\n{nombres_p1}\nCOSTO:\n{costo_jugadores_p1}")
         numero_jugador_escogido = 100
         while numero_jugador_escogido != 0:
             try:
@@ -189,9 +136,10 @@ if __name__ == "__main__":
 
         # Turno del jugador 2
         print("--- Turno del segundo jugador ---")
-        print(f"-- GOLES P1-- {goles_primer_jugador}")
-        print(f"-- GOLES P2-- {goles_segundo_jugador}")
+        print(f"-- GOLES P1-- ")
+        print(f"-- GOLES P2-- ")
         print(f"-- CREDITOS -- {talentos_jugador_2}")
+        print(f"Sus jugadores son:\n{nombres_p2}\nCOSTO:\n{costo_jugadores_p2}")
         numero_segundo_escogido = 100
         while numero_segundo_escogido != 0:
             try:
@@ -232,7 +180,6 @@ if __name__ == "__main__":
             for r in matriz_visual:
                 print("".join(r))
 
-                goles_primer_jugador, goles_segundo_jugador = evaluar_columna(fila_p1, fila_p2, columna_p1, columna_p2, numero_jugador_escogido, numero_segundo_escogido)
         ronda += 1
         talentos_jugador_1 += ronda
         talentos_jugador_2 += ronda
